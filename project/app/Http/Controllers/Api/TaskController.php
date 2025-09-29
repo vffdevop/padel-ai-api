@@ -31,13 +31,15 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+       // dd($request->all());
+        
         $validated = $request->validate([
             'tittle' => 'required|string|max:255',
             'description' => 'nullable|string',
             'completed' => 'boolean'
         ]);
 
-        $task = $task::create($validated);
+        $task = Task::create($validated);
 
         return response()->json([
             'success' => true,

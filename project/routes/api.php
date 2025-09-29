@@ -7,5 +7,12 @@ use Symfony\Component\HttpFoundation\Response;
 Route::apiResource('tasks', TaskController::class);
 
 Route::get('/health', function () {
-    return '{"status" : "ok"}';
+            return response()->json([
+            'success' => true,
+            'message' => 'Health OK'
+        ],Response::HTTP_OK);
+});
+
+Route::put('/test', function() {
+    return response()->json(['ok' => true]);
 });
