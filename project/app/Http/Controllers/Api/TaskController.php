@@ -16,7 +16,8 @@ class TaskController extends Controller
      */
     public function index() : JsonResponse
     {
-        $tasks = Task::all();
+        /*$tasks = Task::all();*/
+        $tasks = Task::where('user_id', $request->user()->id)->get();
 
         return response()->json([
             'success' => true,
@@ -39,6 +40,7 @@ class TaskController extends Controller
             'completed' => 'boolean'
         ]);
 
+        $validated['user_id'] = $request->user()->id;
         $task = Task::create($validated);
 
         return response()->json([
@@ -53,6 +55,13 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        if ($task->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
         return response()->json([
             'success' => true,
             'data' => $task
@@ -64,6 +73,13 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        if ($task->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ],Response::HTTP_FORBIDDEN);
+        }
+
         $validated = $request->validate([
             'tittle' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -85,6 +101,13 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        if ($task->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ],Response::HTTP_FORBIDDEN);
+        }
+        
         $task->delete();
         return response()->json([
             'success' => true,
